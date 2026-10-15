@@ -1,0 +1,675 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#171513">
+  <meta name="description" content="A little piece of the night, made for Pojna Pajama.">
+  <meta property="og:title" content="Fallen Star — for Pojna">
+  <meta property="og:description" content="A little piece of the night, made just for you.">
+  <meta property="og:type" content="website">
+  <title>Fallen Star — for Pojna Pajama</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Courier+Prime:wght@400;700&family=Caveat:wght@500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #171513; --cream: #e9e0d1; --paper: #e5dac6; --rose: #c58e8d;
+      --gold: #c2a674; --muted: #aaa092; --serif: "Cormorant Garamond", Georgia, serif;
+      --type: "Courier Prime", "Courier New", monospace; --script: "Caveat", cursive;
+      --ease: cubic-bezier(.22,.72,.19,1);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-snap-type: y proximity; background: var(--ink); }
+    body { margin: 0; color: var(--cream); background: var(--ink); font-family: var(--serif); overflow-x: hidden; }
+    button, input { font: inherit; }
+    button { color: inherit; }
+    a, button, input, [tabindex="0"] { -webkit-tap-highlight-color: transparent; }
+    :focus-visible { outline: 2px solid var(--gold); outline-offset: 5px; }
+    ::selection { background: var(--rose); color: var(--ink); }
+
+    .backdrop { position: fixed; z-index: 0; inset: 0; overflow: hidden; background: #090909; pointer-events: none; }
+    .backdrop::before { content: ""; position: absolute; inset: -4%; background: url("./assets/cover.png") center 44% / min(100vh, 100vw) auto no-repeat; opacity: .58; filter: brightness(.72) saturate(.72) blur(1px); transform: scale(1.04); animation: kenburns 42s ease-in-out infinite alternate; }
+    .backdrop::after { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 44%, transparent 14%, rgba(6,6,6,.25) 56%, rgba(5,5,5,.86) 112%), linear-gradient(180deg,rgba(8,8,8,.35),rgba(10,9,8,.62)); }
+    .grain, .dust, .leak { position: fixed; inset: 0; z-index: 5; pointer-events: none; }
+    .grain { opacity: .13; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.92' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.44'/%3E%3C/svg%3E"); mix-blend-mode: soft-light; }
+    .dust { opacity: .2; background-image: radial-gradient(1px 1px at 14% 23%,#f0dca9 40%,transparent 60%), radial-gradient(1px 1px at 79% 64%,#fff 40%,transparent 60%), radial-gradient(1px 1px at 43% 88%,#d7c09b 40%,transparent 60%); background-size: 193px 177px, 247px 221px, 311px 269px; }
+    .leak { opacity: .12; background: radial-gradient(ellipse at 4% 15%,rgba(176,99,82,.4),transparent 30%), radial-gradient(ellipse at 97% 85%,rgba(191,160,101,.25),transparent 28%); animation: leak 17s ease-in-out infinite alternate; }
+    @keyframes kenburns { to { transform: scale(1.12) translate3d(0,-1%,0); } }
+    @keyframes leak { to { opacity: .22; } }
+    @keyframes flicker { 0%,100% { opacity:1 } 49% { opacity:.96 } 50% { opacity:.91 } 52% { opacity:.98 } }
+    @keyframes rise { from { opacity:0; transform: translateY(16px) } to { opacity:1; transform:translateY(0) } }
+
+    .topline { position: fixed; z-index: 8; top: 20px; left: 26px; right: 26px; display:flex; justify-content:space-between; align-items:center; pointer-events:none; color:rgba(233,224,209,.68); }
+    .topline span, .eyebrow, .scene-index, .caption, .small-label { font: 10px/1.5 var(--type); letter-spacing:.14em; text-transform:uppercase; }
+    .topline .seal { color:var(--gold); letter-spacing:.22em; }
+    .scenes { position:relative; z-index:1; }
+    .scene { min-height:100svh; position:relative; display:grid; place-items:center; padding:clamp(88px,12vh,140px) 8vw 130px; scroll-snap-align:start; isolation:isolate; overflow:hidden; }
+    .scene::before { content:""; position:absolute; inset:0; background:linear-gradient(90deg,rgba(11,10,9,.28),transparent 34%,transparent 68%,rgba(11,10,9,.3)); z-index:-1; }
+    .scene-inner { width:min(100%,1050px); position:relative; }
+    .scene-index { color:var(--gold); margin-bottom:22px; display:flex; gap:13px; align-items:center; }
+    .scene-index::after { content:""; width:46px; height:1px; background:currentColor; opacity:.55; }
+    .opening { min-height:100svh; text-align:center; }
+    .opening .scene-inner { animation:flicker 6s infinite; }
+    .opening .eyebrow { color:var(--gold); margin-bottom:27px; }
+    h1 { font:500 clamp(5rem,14vw,12.5rem)/.72 var(--serif); letter-spacing:-.075em; margin:0 auto; color:var(--cream); text-shadow:0 2px 35px rgba(0,0,0,.3); }
+    .title-rule { width:58px; height:1px; background:var(--rose); margin:40px auto 24px; }
+    .dedication { font:500 clamp(1.65rem,4vw,2.8rem)/1 var(--script); color:#d6b8a5; transform:rotate(-3deg); display:inline-block; }
+    .opening-note { margin:34px auto 0; font:12px/1.8 var(--type); letter-spacing:.045em; color:rgba(233,224,209,.74); max-width:380px; }
+    .begin { margin-top:38px; padding:13px 21px; border:1px solid rgba(194,166,116,.65); border-radius:0; background:rgba(19,17,15,.48); color:var(--cream); font:11px var(--type); letter-spacing:.14em; text-transform:uppercase; cursor:pointer; transition:background .3s,color .3s,transform .3s; }
+    .begin:hover { background:var(--gold); color:#201b15; transform:translateY(-2px); }
+    .begin:disabled { opacity:.7; cursor:wait; }
+    .audio-hint { display:block; font:10px var(--type); color:rgba(233,224,209,.5); margin-top:14px; }
+
+    .scene-copy { max-width:760px; }
+    .scene-copy.center { text-align:center; margin-inline:auto; }
+    .scene-title { font:400 clamp(2.4rem,6.5vw,6.3rem)/.95 var(--serif); letter-spacing:-.035em; margin:0; max-width:850px; }
+    .scene-title em { color:var(--rose); font-style:italic; }
+    .scene-text { margin-top:24px; font:400 clamp(1.3rem,3vw,2.45rem)/1.26 var(--serif); color:rgba(233,224,209,.9); max-width:620px; }
+    .scene-text p { margin:.55em 0; }
+    .margin-note { display:block; font:11px/1.6 var(--type); color:var(--gold); letter-spacing:.02em; opacity:0; max-height:0; overflow:hidden; transition:opacity .35s,max-height .35s,margin .35s; }
+    .reveal-line { cursor:help; border-bottom:1px dashed rgba(194,166,116,.36); }
+    .reveal-line:hover .margin-note, .reveal-line:focus .margin-note { opacity:1; max-height:4em; margin-top:5px; }
+    .loose-note { position:relative; inset:auto; display:block; background:var(--paper); color:#28231e; padding:21px 24px 23px; width:min(245px,36vw); margin:28px 0 0 auto; box-shadow:2px 10px 32px #0007; transform:rotate(3deg); font:14px/1.45 var(--type); }
+    .loose-note::before { content:""; position:absolute; width:63px; height:17px; top:-8px; left:calc(50% - 31px); background:rgba(194,166,116,.47); transform:rotate(-3deg); }
+    .loose-note .note-kicker { display:block; color:#86665a; font-size:9px; letter-spacing:.12em; margin-bottom:12px; text-transform:uppercase; }
+    .note-a { margin-left:auto; }
+    .note-b { grid-column:1 / -1; justify-self:start; margin:24px 0 0; transform:rotate(-4deg); background:#d7c9b7; }
+    .verse-layout { display:grid; grid-template-columns:1.1fr .8fr; gap:8vw; align-items:center; }
+    .paper-note { color:#342a24; background:rgba(230,218,198,.94); padding:clamp(28px,5vw,56px); max-width:590px; position:relative; box-shadow:0 22px 70px #0006; transform:rotate(-1.2deg); clip-path:polygon(0 1%,98% 0,100% 97%,96% 100%,2% 98%); }
+    .paper-note::before { content:""; position:absolute; inset:12px; border:1px solid rgba(97,72,54,.2); pointer-events:none; }
+    .paper-note .small-label { color:#806b58; }
+    .paper-note p { font:clamp(1.3rem,2.7vw,2.1rem)/1.25 var(--serif); margin:23px 0 0; }
+    .paper-note p + p { margin-top:15px; }
+    .paper-note .margin-note { color:#76564d; }
+    .vein { position:absolute; width:40vw; height:70vh; right:-12vw; top:12vh; opacity:.2; z-index:-1; }
+    .vein path { fill:none; stroke:#a75f5f; stroke-width:1.3; }
+    .heartbeat { animation:heart 1.4s ease-in-out infinite; transform-origin:center; }
+    @keyframes heart { 50% { transform:scale(1.025); } }
+    .apart-wrap { display:flex; justify-content:center; align-items:center; gap:clamp(20px,8vw,120px); margin:35px 0; }
+    .apart { cursor:grab; touch-action:none; user-select:none; color:var(--rose); font:italic clamp(2.3rem,7.5vw,7rem)/.9 var(--serif); white-space:nowrap; transition:letter-spacing .8s var(--ease); }
+    .apart:active { cursor:grabbing; }
+    .closer { font:400 clamp(2rem,6vw,5.4rem)/1 var(--serif); color:var(--cream); letter-spacing:-.045em; }
+    .drag-caption { text-align:center; font:10px var(--type); color:rgba(233,224,209,.58); letter-spacing:.1em; }
+    .reprise .scene-title { font-size:clamp(3rem,8vw,8rem); }
+    .reprise .loose-note { margin:28px 0 0 auto; transform:rotate(5deg); }
+    .focus-copy { filter:blur(7px); opacity:.7; transition:filter 1.4s ease,opacity 1.4s ease; }
+    .focus-copy.in-view { filter:blur(0); opacity:1; }
+    .train-track { position:absolute; bottom:15%; left:0; width:100%; height:48px; border-bottom:1px solid rgba(194,166,116,.28); overflow:hidden; }
+    .train { position:absolute; bottom:3px; left:-150px; width:126px; height:27px; opacity:.75; }
+    .train::before { content:""; position:absolute; left:0; bottom:7px; height:16px; width:105px; border:1px solid var(--gold); border-radius:2px 8px 1px 1px; background:rgba(194,166,116,.12); }
+    .train::after { content:""; position:absolute; width:5px; height:5px; left:15px; bottom:11px; background:var(--gold); box-shadow:17px 0 var(--gold),34px 0 var(--gold),51px 0 var(--gold); }
+    .train .wheel { position:absolute; left:18px; bottom:2px; width:8px; height:8px; border:1px solid var(--gold); border-radius:50%; box-shadow:54px 0 0 -1px var(--ink),54px 0 0 0 var(--gold); }
+    .playing .train { animation:trainrun 17s linear infinite; }
+    @keyframes trainrun { to { transform:translateX(calc(100vw + 300px)); } }
+    .outro { text-align:center; }
+    .outro-lines { margin-top:33px; font:400 clamp(1.65rem,4vw,3rem)/1.35 var(--serif); }
+    .outro-lines p { margin:.35em; opacity:.85; }
+    .closing { min-height:115svh; padding-bottom:180px; }
+    .letter { width:min(100%,740px); margin:auto; padding:clamp(28px,6vw,70px); color:#382d25; background:rgba(231,219,201,.95); box-shadow:0 24px 90px #0008; transform:rotate(-.8deg); position:relative; }
+    .letter::after { content:""; position:absolute; width:75px; height:19px; top:-9px; left:45%; background:rgba(190,147,132,.56); transform:rotate(3deg); }
+    .letter .dedication { font-size:clamp(2.3rem,5vw,4rem); color:#9c6968; }
+    .letter p { font:clamp(1.2rem,2.6vw,1.75rem)/1.35 var(--serif); margin:23px 0; }
+    .letter-sign { font:500 2rem var(--script); color:#8b6256; }
+    .note-form { margin-top:30px; padding-top:22px; border-top:1px solid rgba(87,66,51,.26); }
+    .note-form label { display:block; font:10px var(--type); letter-spacing:.1em; text-transform:uppercase; margin-bottom:9px; }
+    .note-row { display:flex; gap:8px; }
+    .note-row input { flex:1; min-width:0; background:transparent; color:#302720; border:0; border-bottom:1px solid #9f8d78; padding:10px 2px; font:15px var(--type); }
+    .note-row input::placeholder { color:#766d62; }
+    .note-row button, .replay { background:#362b25; border:1px solid #362b25; color:var(--cream); padding:10px 16px; font:10px var(--type); letter-spacing:.08em; text-transform:uppercase; cursor:pointer; }
+    .saved-note { display:none; margin-top:14px!important; font:13px/1.5 var(--type)!important; color:#795950; }
+    .closing-actions { display:flex; justify-content:space-between; align-items:center; margin:32px auto 0; max-width:740px; gap:20px; }
+    .closing-actions .caption { color:rgba(233,224,209,.68); }
+    .download-source { display:inline-flex; align-items:center; justify-content:center; padding:10px 16px; border:1px solid rgba(194,166,116,.7); color:var(--cream); text-decoration:none; font:10px var(--type); letter-spacing:.08em; text-transform:uppercase; transition:background .25s,color .25s; }
+    .download-source:hover { background:var(--gold); color:#201b15; }
+    .replay { background:transparent; border-color:rgba(194,166,116,.7); }
+    .replay:hover { background:var(--gold); color:#201b15; }
+    .star { position:fixed; z-index:7; width:26px; height:26px; border:0; background:none; padding:4px; cursor:pointer; color:var(--gold); opacity:.72; transition:opacity .2s,transform .2s; }
+    .star:hover { opacity:1; transform:scale(1.2); }
+    .star svg { width:100%; height:100%; fill:currentColor; }
+    .star-1 { top:27%; right:8%; } .star-2 { top:67%; left:5%; } .star-3 { top:42%; left:10%; }
+    .cursor-trail { position:fixed; z-index:6; width:7px; height:7px; pointer-events:none; background:var(--gold); clip-path:polygon(50% 0,61% 37%,100% 50%,61% 62%,50% 100%,39% 62%,0 50%,39% 37%); animation:trailfade .68s ease-out forwards; }
+    @keyframes trailfade { to { opacity:0; transform:scale(.15) translateY(9px); } }
+    .fallen { position:fixed; z-index:9; pointer-events:none; font-size:18px; color:var(--gold); animation:falling 1.25s ease-in forwards; }
+    @keyframes falling { to { transform:translate(60px,100vh) rotate(120deg); opacity:0; } }
+    .secret { position:fixed; inset:0; z-index:12; display:grid; place-items:center; padding:28px; background:rgba(12,10,9,.94); opacity:0; visibility:hidden; transition:opacity .5s,visibility .5s; }
+    .secret.open { opacity:1; visibility:visible; }
+    .secret-card { max-width:540px; text-align:center; border:1px solid rgba(194,166,116,.4); padding:clamp(30px,7vw,70px); background:#211d19; }
+    .secret-card p { font:clamp(2rem,5vw,3.5rem)/1.1 var(--serif); margin:15px 0 30px; }
+    .secret button { border:1px solid var(--gold); background:none; padding:10px 18px; font:10px var(--type); letter-spacing:.1em; cursor:pointer; }
+    .player { position:fixed; z-index:10; bottom:22px; left:22px; width:min(350px,calc(100vw - 44px)); padding:12px 14px; display:grid; grid-template-columns:42px 1fr 30px; gap:12px; align-items:center; background:rgba(18,16,14,.86); border:1px solid rgba(233,224,209,.18); backdrop-filter:blur(8px); box-shadow:0 8px 30px #0005; }
+    .cassette { width:42px; height:31px; position:relative; background:#c6bba9; border:2px solid #8e8476; border-radius:2px; display:flex; align-items:center; justify-content:space-evenly; }
+    .cassette::before { content:""; position:absolute; left:5px; right:5px; top:4px; height:7px; background:#312d29; }
+    .reel { position:relative; z-index:1; width:9px; height:9px; border-radius:50%; background:#d0b989; border:2px solid #5b5042; }
+    .playing .reel { animation:spin 1s linear infinite; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    .player-meta { min-width:0; }
+    .track-name { display:block; font:11px var(--type); letter-spacing:.04em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .track-sub { display:flex; justify-content:space-between; gap:5px; color:rgba(233,224,209,.59); font:9px var(--type); margin-top:6px; }
+    .scrub { width:100%; height:13px; display:block; accent-color:var(--rose); cursor:pointer; }
+    .transport { width:30px; height:34px; border:0; background:none; cursor:pointer; font:18px var(--type); color:var(--cream); }
+    .player[data-locked="true"] .transport { opacity:.52; }
+    .filmstrip { position:fixed; z-index:9; right:22px; bottom:25px; display:flex; gap:3px; padding:4px; background:rgba(18,16,14,.84); border:1px solid rgba(233,224,209,.16); touch-action:pan-y; cursor:ew-resize; }
+    .filmstrip button { width:29px; height:25px; border:1px solid rgba(233,224,209,.16); padding:0; color:rgba(233,224,209,.56); background:rgba(233,224,209,.03); font:9px var(--type); cursor:pointer; transition:background .25s,color .25s; }
+    .filmstrip button[aria-current="true"] { background:var(--gold); color:#201b15; }
+    .star-count { position:fixed; z-index:8; top:21px; right:26px; color:rgba(233,224,209,.55); font:9px var(--type); letter-spacing:.09em; pointer-events:none; }
+    .star-count span { color:var(--gold); }
+    .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+    .playing .scene.is-active .scene-inner { animation:rise .7s var(--ease) both; }
+
+    @media (max-width:760px) {
+      .topline { top:14px; left:16px; right:16px; }
+      .star-count { top:42px; right:16px; }
+      .scene { padding:100px 8vw 150px; }
+      .verse-layout { grid-template-columns:1fr; gap:45px; }
+      .note-a, .note-b { inset:auto; width:min(205px,70vw); }
+      .note-b { grid-column:1 / -1; margin-top:20px; }
+      .loose-note { font-size:12px; }
+      .train-track { bottom:17%; }
+      .closing { padding-bottom:175px; }
+      .player { left:12px; bottom:12px; width:min(310px,calc(100vw - 24px)); grid-template-columns:36px 1fr 28px; gap:9px; }
+      .cassette { transform:scale(.88); transform-origin:left center; }
+      .filmstrip { right:12px; bottom:80px; }
+      .filmstrip button { width:26px; }
+      .closing-actions { align-items:flex-start; flex-direction:column; }
+      .apart-wrap { gap:14px; }
+      .apart { font-size:clamp(2rem,8.5vw,4.3rem); }
+      .closer { font-size:clamp(1.8rem,7vw,3.6rem); }
+    }
+    @media (max-width:390px) {
+      .filmstrip button { width:22px; }
+      .scene { padding-inline:7vw; }
+      .note-row { flex-direction:column; }
+      .note-row button { align-self:flex-start; margin-top:8px; }
+    }
+    @media (prefers-reduced-motion:reduce) {
+      *,*::before,*::after { scroll-behavior:auto!important; animation-duration:.01ms!important; animation-iteration-count:1!important; transition-duration:.01ms!important; }
+      .backdrop::before { animation:none; transform:none; }
+      .grain { opacity:.08; }
+    }
+  </style>
+</head>
+<body>
+  <div class="backdrop" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div><div class="dust" aria-hidden="true"></div><div class="leak" aria-hidden="true"></div>
+  <header class="topline"><span class="seal">a small film for a friend</span><span>side A · 01—09</span></header>
+  <div class="star-count" aria-live="polite">NIGHT STARS <span id="star-number">00</span>/10</div>
+  <button class="star star-1" type="button" aria-label="Make a star fall"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 1.8 2.5 7.1 7.2 3.1-7.2 2.8-2.5 7.4-2.6-7.4-7.1-2.8 7.1-3.1z"/></svg></button>
+  <button class="star star-2" type="button" aria-label="Make a star fall"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 1.8 2.5 7.1 7.2 3.1-7.2 2.8-2.5 7.4-2.6-7.4-7.1-2.8 7.1-3.1z"/></svg></button>
+  <button class="star star-3" type="button" aria-label="Make a star fall"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 1.8 2.5 7.1 7.2 3.1-7.2 2.8-2.5 7.4-2.6-7.4-7.1-2.8 7.1-3.1z"/></svg></button>
+
+  <main class="scenes" id="scenes">
+    <section class="scene opening is-active" id="scene-0" data-scene="0" aria-labelledby="title">
+      <div class="scene-inner">
+        <p class="eyebrow">a little note, set to music</p>
+        <h1 id="title">Fallen<br>Star</h1>
+        <div class="title-rule"></div>
+        <p class="dedication">for Pojna Pajama</p>
+        <p class="opening-note">Some days are louder than others.<br>This is here for the quieter ones.</p>
+        <button class="begin" id="begin">Tap to begin</button>
+        <span class="audio-hint" id="audio-hint">sound on, whenever you're ready</span>
+      </div>
+    </section>
+
+    <section class="scene chorus" id="scene-1" data-scene="1" aria-label="Scene two, the distance">
+      <div class="scene-inner scene-copy center">
+        <p class="scene-index">02 / a thought to keep</p>
+        <h2 class="scene-title">Somewhere in all that space,<br><em>you are still held.</em></h2>
+        <div class="apart-wrap" aria-label="Drag the words further apart; they will drift back together">
+          <span class="apart" id="apart" tabindex="0" role="slider" aria-label="Further apart, drag to change the distance" aria-valuemin="0" aria-valuemax="180" aria-valuenow="56">further apart</span>
+          <span class="closer">the closer</span>
+        </div>
+        <p class="drag-caption" id="drag-caption">you can pull the phrase apart. it always finds its way back.</p>
+        <p class="scene-text reveal-line" tabindex="0">You don't have to earn your place here.<span class="margin-note">leave that impossible job to the rest of the world.</span></p>
+        <aside class="loose-note note-a"><span class="note-kicker">for later</span>You are not difficult to love just because you have difficult days.</aside>
+      </div>
+    </section>
+
+    <section class="scene" id="scene-2" data-scene="2" aria-label="Scene three, things that are true">
+      <div class="scene-inner verse-layout">
+        <article class="paper-note">
+          <span class="small-label">a note in the margin / 03</span>
+          <p class="reveal-line" tabindex="0">You make ordinary rooms feel less like somewhere to pass through.<span class="margin-note">this is a real thing you do, even when you don't notice.</span></p>
+          <p class="reveal-line" tabindex="0">There is a softness in you that survived a lot. It deserves care, not an explanation.<span class="margin-note">no footnotes needed.</span></p>
+        </article>
+        <div class="scene-copy">
+          <p class="scene-index">03 / no small thing</p>
+          <h2 class="scene-title">The way you<br>show up <em>matters.</em></h2>
+          <p class="scene-text">Not loudly. Not perfectly. Just as you are, with your sleeves rolled up and your heart still open.</p>
+        </div>
+        <aside class="loose-note note-b"><span class="note-kicker">keep this one</span>Your presence is not a favor people are doing you. It's a gift they get.</aside>
+      </div>
+    </section>
+
+    <section class="scene" id="scene-3" data-scene="3" aria-label="Scene four, a quieter truth">
+      <svg class="vein" viewBox="0 0 400 700" aria-hidden="true"><path d="M200 0 C170 100 250 140 191 221 S140 330 221 372 260 480 191 540 198 625 146 700M196 216 C120 205 83 156 36 138M202 373 C278 331 311 298 355 244M191 540 C121 512 89 510 25 459"/></svg>
+      <div class="scene-inner scene-copy center heartbeat">
+        <p class="scene-index">04 / stay a moment</p>
+        <h2 class="scene-title">Rest is not<br><em>something you owe back.</em></h2>
+        <div class="scene-text">
+          <p class="reveal-line" tabindex="0">You can be tired and still be good.<span class="margin-note">both things can sit in the same room.</span></p>
+          <p class="reveal-line" tabindex="0">You can need help without becoming a burden.<span class="margin-note">letting someone in is its own kind of brave.</span></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="scene reprise" id="scene-4" data-scene="4" aria-label="Scene five, what remains">
+      <div class="scene-inner scene-copy">
+        <p class="scene-index">05 / again, because it bears repeating</p>
+        <h2 class="scene-title">You are allowed<br>to be <em>loved</em><br>without being useful.</h2>
+        <p class="scene-text reveal-line" tabindex="0">No fixing. No keeping score. No better version of you required.<span class="margin-note">this is not a prize for making it through.</span></p>
+        <aside class="loose-note"><span class="note-kicker">underlined twice</span>Being loved is not a performance review.</aside>
+      </div>
+    </section>
+
+    <section class="scene" id="scene-5" data-scene="5" aria-label="Scene six, looking back gently">
+      <div class="scene-inner verse-layout">
+        <div class="scene-copy focus-copy">
+          <p class="scene-index">06 / looking back gently</p>
+          <h2 class="scene-title">Look at all the days<br>you thought you <em>couldn't.</em></h2>
+          <p class="scene-text">And then you did. Not in a neat little montage. In small, uneven, completely human ways. That counts.</p>
+        </div>
+        <article class="paper-note focus-copy">
+          <span class="small-label">developed in the dark</span>
+          <p class="reveal-line" tabindex="0">I hope you get to meet yourself on a day when you are not asking so much of yourself.<span class="margin-note">I'll save you a seat for that version, too.</span></p>
+        </article>
+      </div>
+    </section>
+
+    <section class="scene" id="scene-6" data-scene="6" aria-label="Scene seven, the long way home">
+      <div class="scene-inner scene-copy center">
+        <p class="scene-index">07 / the long way home</p>
+        <h2 class="scene-title">Even the slow way<br>is still a <em>way through.</em></h2>
+        <p class="scene-text reveal-line" tabindex="0" style="margin-inline:auto">You do not need to have it figured out before you deserve tenderness.<span class="margin-note">you can arrive unfinished. that's the whole point.</span></p>
+        <aside class="loose-note note-a"><span class="note-kicker">ticket stub / keep</span>There is no deadline on becoming okay.</aside>
+      </div>
+      <div class="train-track" aria-hidden="true"><div class="train"><i class="wheel"></i></div></div>
+    </section>
+
+    <section class="scene outro" id="scene-7" data-scene="7" aria-label="Scene eight, what I hope stays">
+      <div class="scene-inner">
+        <p class="scene-index">08 / before the lights come up</p>
+        <h2 class="scene-title">If nothing else,<br>let this <em>stay.</em></h2>
+        <div class="outro-lines">
+          <p>You are wanted in the room.</p>
+          <p>You are worth checking on.</p>
+          <p>You are loved on the ordinary days, too.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="scene closing" id="scene-8" data-scene="8" aria-label="Scene nine, a letter for Pojna">
+      <div class="scene-inner">
+        <article class="letter">
+          <span class="small-label">the last frame / still yours</span>
+          <p class="dedication">Pojna Pajama,</p>
+          <p>I made this because I wanted you to have something you could come back to on a day when your own voice is being unkind.</p>
+          <p>You don't have to become brighter, easier, or less complicated to be someone worth staying for. I like you here. Exactly here, in the middle of figuring things out.</p>
+          <p>Keep this somewhere. Borrow my certainty until yours comes back.</p>
+          <p class="letter-sign">this one's for you, always.</p>
+          <form class="note-form" id="note-form">
+            <label for="kept-note">Leave a little note here for next time</label>
+            <div class="note-row"><input id="kept-note" maxlength="180" placeholder="Something you want to remember…" autocomplete="off"><button type="submit">Keep it</button></div>
+            <p class="saved-note" id="saved-note" aria-live="polite"></p>
+          </form>
+        </article>
+        <div class="closing-actions">
+          <span class="caption">end of side A · the rest is yours</span>
+          <a class="download-source" href="./downloads/fallen-star-source.zip" download>Download code + assets</a>
+          <button class="replay" id="replay">Start over, from the top</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="player" id="player" data-locked="true" aria-label="Cassette player">
+    <div class="cassette" aria-hidden="true"><i class="reel"></i><i class="reel"></i></div>
+    <div class="player-meta">
+      <span class="track-name">Fallen Star · The Neighbourhood</span>
+      <input class="scrub" id="scrub" type="range" min="0" max="224.99" step=".1" value="0" aria-label="Track position" disabled>
+      <div class="track-sub"><span id="time-now">00:00</span><span>side A / 03:45</span></div>
+    </div>
+    <button class="transport" id="transport" type="button" aria-label="Play" title="Play" disabled>▶</button>
+  </div>
+  <nav class="filmstrip" aria-label="Jump to scene">
+    <button type="button" data-jump="0" aria-label="Scene 1: opening" aria-current="true">01</button>
+    <button type="button" data-jump="1" aria-label="Scene 2: a thought to keep">02</button>
+    <button type="button" data-jump="2" aria-label="Scene 3: no small thing">03</button>
+    <button type="button" data-jump="3" aria-label="Scene 4: stay a moment">04</button>
+    <button type="button" data-jump="4" aria-label="Scene 5: again">05</button>
+    <button type="button" data-jump="5" aria-label="Scene 6: looking back">06</button>
+    <button type="button" data-jump="6" aria-label="Scene 7: the long way home">07</button>
+    <button type="button" data-jump="7" aria-label="Scene 8: before the lights">08</button>
+    <button type="button" data-jump="8" aria-label="Scene 9: letter">09</button>
+  </nav>
+  <audio id="audio" preload="metadata" src="./assets/fallen-star.mp3"></audio>
+  <div class="secret" id="secret" role="dialog" aria-modal="true" aria-labelledby="secret-title">
+    <div class="secret-card">
+      <span class="eyebrow">a note from the dark</span>
+      <p id="secret-title">Pojna, you are not hard to love. You never were.</p>
+      <button type="button" id="close-secret">keep this with you</button>
+    </div>
+  </div>
+  <div class="sr-only" id="announce" aria-live="polite"></div>
+
+  <script>
+    // Edit these cue times to match the supplied 224.99-second track.
+    const SCENE_CUES = [
+      { id: 0, title: "Opening", start: 0, end: 12 },
+      { id: 1, title: "A thought to keep", start: 12, end: 48 },
+      { id: 2, title: "No small thing", start: 48, end: 76 },
+      { id: 3, title: "Stay a moment", start: 76, end: 98 },
+      { id: 4, title: "Again, because it bears repeating", start: 98, end: 132 },
+      { id: 5, title: "Looking back gently", start: 132, end: 160 },
+      { id: 6, title: "The long way home", start: 160, end: 184 },
+      { id: 7, title: "Before the lights come up", start: 184, end: 207 },
+      { id: 8, title: "A letter for Pojna", start: 207, end: 224.99 }
+    ];
+
+    const audio = document.getElementById("audio");
+    const beginButton = document.getElementById("begin");
+    const audioHint = document.getElementById("audio-hint");
+    const transport = document.getElementById("transport");
+    const scrub = document.getElementById("scrub");
+    const player = document.getElementById("player");
+    const timeNow = document.getElementById("time-now");
+    const scenes = [...document.querySelectorAll(".scene")];
+    const jumps = [...document.querySelectorAll("[data-jump]")];
+    const filmstrip = document.querySelector(".filmstrip");
+    const downloadLink = document.querySelector(".download-source");
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    downloadLink.hidden = window.location.protocol === "file:";
+    let hasBegun = false;
+    let activeScene = 0;
+    let scrollIsPrimary = false;
+    let programmaticScroll = false;
+    let programmaticScrollTimer = 0;
+    let scrollFrame = 0;
+    let starCount = 0;
+    let draggingPhrase = false;
+    let phraseStartX = 0;
+    let phraseStartValue = 56;
+    const apart = document.getElementById("apart");
+    let phraseDistance = 56;
+
+    function formatTime(seconds) {
+      const safe = Number.isFinite(seconds) ? Math.max(0, seconds) : 0;
+      return `${String(Math.floor(safe / 60)).padStart(2, "0")}:${String(Math.floor(safe % 60)).padStart(2, "0")}`;
+    }
+    function setPlaying(isPlaying) {
+      document.body.classList.toggle("playing", isPlaying);
+      transport.textContent = isPlaying ? "Ⅱ" : "▶";
+      transport.setAttribute("aria-label", isPlaying ? "Pause" : "Play");
+      transport.title = isPlaying ? "Pause" : "Play";
+    }
+    async function begin() {
+      if (hasBegun && !audio.paused) return;
+      hasBegun = true;
+      scrollIsPrimary = false;
+      audio.volume = .72;
+      try {
+        await audio.play();
+        audioHint.textContent = "the music is yours to pause, anytime";
+        beginButton.textContent = "Music is playing";
+        beginButton.disabled = false;
+        transport.disabled = false;
+        scrub.disabled = false;
+        player.dataset.locked = "false";
+        setPlaying(true);
+      } catch (error) {
+        audioHint.textContent = "The track could not start. Try the play button below.";
+        beginButton.textContent = "Try the music again";
+        hasBegun = false;
+      }
+    }
+    beginButton.addEventListener("click", begin);
+    transport.addEventListener("click", async () => {
+      if (!hasBegun) { await begin(); return; }
+      if (audio.paused) {
+        try { await audio.play(); setPlaying(true); }
+        catch { audioHint.textContent = "The track could not start. Try again."; }
+      } else { audio.pause(); setPlaying(false); }
+    });
+    audio.addEventListener("loadedmetadata", () => {
+      const duration = Number.isFinite(audio.duration) ? audio.duration : 224.99;
+      scrub.max = String(duration);
+    });
+    audio.addEventListener("timeupdate", () => {
+      if (!scrub.matches(":active")) scrub.value = String(audio.currentTime);
+      timeNow.textContent = formatTime(audio.currentTime);
+      if (audio.duration && audio.currentTime >= audio.duration - .2) setPlaying(false);
+      const cue = [...SCENE_CUES].reverse().find(item => audio.currentTime >= item.start);
+      if (cue && !scrollIsPrimary) setActiveScene(cue.id, false);
+    });
+    audio.addEventListener("play", () => {
+      scrollIsPrimary = false;
+      setPlaying(true);
+    });
+    audio.addEventListener("pause", () => setPlaying(false));
+    scrub.addEventListener("input", () => {
+      if (hasBegun) {
+        scrollIsPrimary = false;
+        audio.currentTime = Number(scrub.value);
+        timeNow.textContent = formatTime(audio.currentTime);
+      }
+    });
+    scrub.addEventListener("change", () => {
+      if (hasBegun) audio.currentTime = Number(scrub.value);
+    });
+
+    function setActiveScene(index, scroll = false) {
+      activeScene = index;
+      scenes.forEach((scene, i) => {
+        scene.classList.toggle("is-active", i === index);
+      });
+      jumps.forEach((button, i) => {
+        if (i === index) button.setAttribute("aria-current", "true");
+        else button.removeAttribute("aria-current");
+      });
+      if (scroll) {
+        programmaticScroll = true;
+        window.clearTimeout(programmaticScrollTimer);
+        scenes[index].scrollIntoView({ behavior: reducedMotion.matches ? "auto" : "smooth", block: "start" });
+        programmaticScrollTimer = window.setTimeout(() => {
+          programmaticScroll = false;
+        }, reducedMotion.matches ? 100 : 1100);
+      }
+    }
+    function updateSceneFromScroll() {
+      const viewportCenter = window.innerHeight / 2;
+      let closestIndex = 0;
+      let closestDistance = Number.POSITIVE_INFINITY;
+      scenes.forEach((scene, index) => {
+        const rect = scene.getBoundingClientRect();
+        const distance = viewportCenter < rect.top
+          ? rect.top - viewportCenter
+          : viewportCenter > rect.bottom
+            ? viewportCenter - rect.bottom
+            : 0;
+        if (distance < closestDistance) {
+          closestDistance = distance;
+          closestIndex = index;
+        }
+      });
+      setActiveScene(closestIndex);
+    }
+    window.addEventListener("scroll", () => {
+      if (!programmaticScroll) scrollIsPrimary = true;
+      if (scrollFrame) return;
+      scrollFrame = window.requestAnimationFrame(() => {
+        scrollFrame = 0;
+        updateSceneFromScroll();
+      });
+    }, { passive: true });
+    updateSceneFromScroll();
+    jumps.forEach(button => {
+      const jump = () => {
+        const index = Number(button.dataset.jump);
+        scrollIsPrimary = false;
+        setActiveScene(index, true);
+        if (hasBegun) audio.currentTime = SCENE_CUES[index].start;
+      };
+      button.addEventListener("click", jump);
+      button.addEventListener("keydown", event => {
+        if (event.key === "ArrowRight" || event.key === "ArrowLeft") {
+          event.preventDefault();
+          const direction = event.key === "ArrowRight" ? 1 : -1;
+          jumps[(Number(button.dataset.jump) + direction + jumps.length) % jumps.length].focus();
+        }
+      });
+    });
+    let stripStartX = 0;
+    let stripDragged = false;
+    filmstrip.addEventListener("pointerdown", event => {
+      stripStartX = event.clientX;
+      stripDragged = false;
+      filmstrip.setPointerCapture(event.pointerId);
+    });
+    filmstrip.addEventListener("pointermove", event => {
+      if (Math.abs(event.clientX - stripStartX) > 10) stripDragged = true;
+    });
+    filmstrip.addEventListener("pointerup", event => {
+      if (!stripDragged) return;
+      const rect = filmstrip.getBoundingClientRect();
+      const ratio = Math.max(0, Math.min(.999, (event.clientX - rect.left) / rect.width));
+      const index = Math.floor(ratio * SCENE_CUES.length);
+      scrollIsPrimary = false;
+      setActiveScene(index, true);
+      if (hasBegun) audio.currentTime = SCENE_CUES[index].start;
+      window.setTimeout(() => { stripDragged = false; }, 0);
+    });
+    filmstrip.addEventListener("click", event => {
+      if (stripDragged) { event.preventDefault(); event.stopPropagation(); }
+    }, true);
+    const observer = new IntersectionObserver(entries => {
+      if (entries.some(item => item.isIntersecting && Number(item.target.dataset.scene) === 5)) {
+        document.querySelectorAll(".focus-copy").forEach(el => el.classList.add("in-view"));
+      }
+    }, { threshold: [.3,.52,.72] });
+    scenes.forEach(scene => observer.observe(scene));
+
+    function setPhraseDistance(value) {
+      phraseDistance = Math.max(0, Math.min(180, value));
+      apart.style.letterSpacing = `${phraseDistance / 17}px`;
+      apart.style.transform = `translateX(${(phraseDistance - 56) / 2}px)`;
+      apart.setAttribute("aria-valuenow", Math.round(phraseDistance));
+    }
+    apart.addEventListener("pointerdown", event => {
+      draggingPhrase = true;
+      phraseStartX = event.clientX;
+      phraseStartValue = phraseDistance;
+      apart.setPointerCapture(event.pointerId);
+    });
+    apart.addEventListener("pointermove", event => {
+      if (draggingPhrase) setPhraseDistance(phraseStartValue + (event.clientX - phraseStartX) * .55);
+    });
+    const releasePhrase = () => {
+      if (!draggingPhrase) return;
+      draggingPhrase = false;
+      const distanceAtRelease = phraseDistance;
+      window.setTimeout(() => setPhraseDistance(distanceAtRelease * .25), reducedMotion.matches ? 0 : 1800);
+      window.setTimeout(() => setPhraseDistance(56), reducedMotion.matches ? 0 : 5200);
+    };
+    apart.addEventListener("pointerup", releasePhrase);
+    apart.addEventListener("pointercancel", releasePhrase);
+    apart.addEventListener("keydown", event => {
+      if (event.key === "ArrowRight" || event.key === "ArrowLeft") {
+        event.preventDefault();
+        setPhraseDistance(phraseDistance + (event.key === "ArrowRight" ? 12 : -12));
+      } else if (event.key === "Home") setPhraseDistance(0);
+      else if (event.key === "End") setPhraseDistance(180);
+    });
+
+    function fallStar(x, y) {
+      const star = document.createElement("span");
+      star.className = "fallen";
+      star.textContent = "";
+      star.setAttribute("aria-hidden", "true");
+      star.style.width = "10px";
+      star.style.height = "10px";
+      star.style.background = "var(--gold)";
+      star.style.clipPath = "polygon(50% 0,61% 37%,100% 50%,61% 62%,50% 100%,39% 62%,0 50%,39% 37%)";
+      star.style.left = `${x}px`;
+      star.style.top = `${y}px`;
+      document.body.appendChild(star);
+      star.addEventListener("animationend", () => star.remove(), { once: true });
+      starCount++;
+      document.getElementById("star-number").textContent = String(Math.min(starCount, 10)).padStart(2, "0");
+      if (starCount === 10) {
+        document.getElementById("secret").classList.add("open");
+        document.getElementById("close-secret").focus();
+        document.getElementById("announce").textContent = "A hidden note for Pojna has appeared.";
+      }
+    }
+    document.querySelectorAll(".star").forEach(star => star.addEventListener("click", event => {
+      const rect = event.currentTarget.getBoundingClientRect();
+      fallStar(rect.left + rect.width / 2, rect.top + rect.height / 2);
+    }));
+    // Three visible sky marks; the remaining seven are discoverable on open sky.
+    document.querySelectorAll(".scene").forEach(scene => scene.addEventListener("click", event => {
+      if (event.target.closest("button,input,textarea,a,.apart,.reveal-line,.paper-note,.letter,.loose-note")) return;
+      if (starCount < 10) fallStar(event.clientX, event.clientY);
+    }));
+    const closeSecret = document.getElementById("close-secret");
+    closeSecret.addEventListener("click", () => {
+      document.getElementById("secret").classList.remove("open");
+      document.getElementById("announce").textContent = "";
+    });
+    document.getElementById("secret").addEventListener("click", event => {
+      if (event.target.id === "secret") closeSecret.click();
+    });
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape" && document.getElementById("secret").classList.contains("open")) closeSecret.click();
+    });
+
+    const noteForm = document.getElementById("note-form");
+    const noteInput = document.getElementById("kept-note");
+    const savedNote = document.getElementById("saved-note");
+    function showSavedNote() {
+      const note = localStorage.getItem("fallen-star-pojna-note");
+      if (note) {
+        savedNote.textContent = `Kept for next time: “${note}”`;
+        savedNote.style.display = "block";
+        noteInput.value = note;
+      }
+    }
+    showSavedNote();
+    noteForm.addEventListener("submit", event => {
+      event.preventDefault();
+      const value = noteInput.value.trim();
+      if (!value) { noteInput.focus(); return; }
+      try {
+        localStorage.setItem("fallen-star-pojna-note", value);
+        savedNote.textContent = `Kept for next time: “${value}”`;
+        savedNote.style.display = "block";
+        document.getElementById("announce").textContent = "Your note is saved on this device.";
+      } catch {
+        savedNote.textContent = "This browser couldn't keep the note, but you can leave this page open.";
+        savedNote.style.display = "block";
+      }
+    });
+    document.getElementById("replay").addEventListener("click", () => {
+      audio.pause();
+      audio.currentTime = 0;
+      scrollIsPrimary = false;
+      setPlaying(false);
+      setActiveScene(0, true);
+      beginButton.textContent = hasBegun ? "Play it again" : "Tap to begin";
+      beginButton.focus();
+    });
+    if (!reducedMotion.matches && matchMedia("(pointer:fine)").matches) {
+      let trailTick = 0;
+      document.addEventListener("pointermove", event => {
+        if (event.timeStamp - trailTick < 85) return;
+        trailTick = event.timeStamp;
+        const speck = document.createElement("i");
+        speck.className = "cursor-trail";
+        speck.style.left = `${event.clientX - 3}px`;
+        speck.style.top = `${event.clientY - 3}px`;
+        document.body.appendChild(speck);
+        speck.addEventListener("animationend", () => speck.remove(), { once: true });
+      }, { passive: true });
+    }
+  </script>
+</body>
+</html>
